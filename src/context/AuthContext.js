@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
@@ -14,36 +13,31 @@ export const AuthProvider = ({ children }) => {
       try {
         const decodedToken = jwtDecode(token);
         if (decodedToken.exp * 1000 > Date.now()) {
-          setUser(decodedToken); // Set user from token
+          setUser(decodedToken);
         } else {
           localStorage.removeItem("authToken");
-          localStorage.removeItem("userRole");
         }
       } catch (error) {
-        console.error("[AuthContext] Invalid token:", error);
+        console.error("Invalid token:", error);
         localStorage.removeItem("authToken");
-        localStorage.removeItem("userRole");
       }
     }
-    setLoading(false); // Finished checking the token
+    setLoading(false);
   }, []);
 
   const login = (token) => {
     localStorage.setItem("authToken", token);
-    const decodedToken = jwtDecode(token);
-    localStorage.setItem("userRole", decodedToken.role);
-    setUser(decodedToken);
+    setUser(jwtDecode(token));
   };
 
   const logout = () => {
     localStorage.removeItem("authToken");
-    localStorage.removeItem("userRole");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -1,26 +1,31 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
 import Header from "../Header";
 import Footer from "../Footer";
 import Chatbot from "../../pages/Chatbot";
 
-const MainLayout = ({ children }) => (
-  <div className="flex flex-col min-h-screen relative">
-    {/* Header */}
-    <header className="fixed top-0 left-0 w-full z-10">
-      <Header />
-    </header>
+const MainLayout = () => {
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <header>
+        <Header />
+      </header>
 
-    {/* Main Content */}
-    <main className="flex-grow pt-[64px] pb-[64px]">{children}</main>
+      {/* Main Content */}
+      <main className="flex-grow">
+        <Outlet />
+      </main>
 
-    {/* Footer */}
-    <footer className="fixed bottom-0 left-0 w-full z-10">
-      <Footer />
-    </footer>
+      {/* Footer */}
+      <footer>
+        <Footer />
+      </footer>
 
-    {/* Chatbot */}
-    <Chatbot />
-  </div>
-);
+      {/* Chatbot */}
+      <Chatbot />
+    </div>
+  );
+};
 
 export default MainLayout;
