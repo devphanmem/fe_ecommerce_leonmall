@@ -23,6 +23,8 @@ import BlogDetailsPage from "./pages/BlogDetailsPage";
 import Chatbot from "./pages/Chatbot";
 
 import Dashboard from "./pages/admin/Dashboard";
+import Success from "./pages/Success";
+import ErrorPage from "./pages/ErrorPage";
 
 const App = () => {
   return (
@@ -49,6 +51,8 @@ const App = () => {
                 <Route path="/blogs" element={<BlogListPage />} />
                 <Route path="/blogs/:id" element={<BlogDetailsPage />} />
                 <Route path="/chatbot" element={<Chatbot />} />
+                <Route path="/success" element={<Success />} />
+                <Route path="/error" element={<ErrorPage />} />
               </Route>
             </Route>
 

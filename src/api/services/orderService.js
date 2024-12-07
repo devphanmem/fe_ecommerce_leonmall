@@ -22,15 +22,15 @@ export const updateOrderStatus = async (id, status) => {
   }
 };
 
-// Place an order from the cart
-export const placeOrder = async (orderData) => {
-  try {
-    const response = await axiosInstance.post("/orders", orderData);
-    return response.data; // Return order confirmation details
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to place order");
-  }
-};
+// // Place an order from the cart
+// export const placeOrder = async (orderData) => {
+//   try {
+//     const response = await axiosInstance.post("/orders", orderData);
+//     return response.data; // Return order confirmation details
+//   } catch (error) {
+//     throw new Error(error.response?.data?.message || "Failed to place order");
+//   }
+// };
 
 // Fetch all orders (Order history)
 export const getOrderHistory = async () => {
@@ -52,6 +52,23 @@ export const getOrderDetails = async (orderId) => {
   } catch (error) {
     throw new Error(
       error.response?.data?.message || "Failed to fetch order details"
+    );
+  }
+};
+
+export const placeOrder = async (orderData) => {
+  try {
+    const response = await axiosInstance.get("/payment/create", {
+      params: {
+        amount: orderData.totalAmount,
+        orderId: orderData.orderId,
+        returnUrl: "http://localhost:3001/success", // URL trả về sau khi thanh toán thành công
+      },
+    });
+    return response.data; // Trả về thông tin thanh toán
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to initiate payment"
     );
   }
 };

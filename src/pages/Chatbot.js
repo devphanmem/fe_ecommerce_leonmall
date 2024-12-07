@@ -1,16 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Input, Button, message, Avatar } from "antd";
 import { SendOutlined, UserOutlined } from "@ant-design/icons";
 import Lottie from "lottie-react";
 import typingAnimation from "../components/animations/typing.json";
 import chatbotAnimation from "../components/animations/chatbot.json";
 import { sendPromptToGemini } from "../api/services/chatService";
+import { getProducts } from "../api/services/productService";
+import { getCategories } from "../api/services/categoryService";
 
 const Chatbot = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    // Fetch products and categories when the component mounts
+    const fetchData = async () => {
+      try {
+        const fetchedProducts = await getProducts();
+        const fetchedCategories = await getCategories();
+        setProducts(fetchedProducts);
+        setCategories(fetchedCategories);
+      } catch (error) {
+        message.error("Failed to fetch products or categories");
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => {
@@ -32,7 +51,33 @@ const Chatbot = () => {
     setLoading(true);
 
     try {
-      const apiResponse = await sendPromptToGemini(prompt);
+      // Prepare the prompt with products and categories
+      const productList = products
+        .map(
+          (product) =>
+            `${product.name} (${product.category.name}): ${product.description}`
+        )
+        .join("\n");
+
+      const categoryList = categories
+        .map((category) => `${category.name}: ${category.description}`)
+        .join("\n");
+
+      const fullPrompt = `
+        You are an AI assistant for LeonMall, an e-commerce platform. 
+        Here is a list of available products and categories:
+
+        Products:
+        ${productList}
+
+        Categories:
+        ${categoryList}
+
+        Please answer the user's query based on this information:
+        ${prompt}
+      `;
+
+      const apiResponse = await sendPromptToGemini(fullPrompt);
 
       setMessages((prevMessages) => [
         ...prevMessages,
